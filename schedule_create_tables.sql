@@ -12,27 +12,14 @@ GO
 DECLARE @time TIME = N'00:00:00'
 ;WITH st (time_minutes) AS
 (
-				SELECT time_minutes = 0
-	UNION ALL	SELECT time_minutes = st.time_minutes + 1 FROM st WHERE st.time_minutes < 100
-	UNION ALL	SELECT time_minutes = st.time_minutes + 101 FROM st WHERE st.time_minutes < 100
-	UNION ALL	SELECT time_minutes = st.time_minutes + 201 FROM st WHERE st.time_minutes < 100
-	UNION ALL	SELECT time_minutes = st.time_minutes + 301 FROM st WHERE st.time_minutes < 100
-	UNION ALL	SELECT time_minutes = st.time_minutes + 401 FROM st WHERE st.time_minutes < 100
-	UNION ALL	SELECT time_minutes = st.time_minutes + 501 FROM st WHERE st.time_minutes < 100
-	UNION ALL	SELECT time_minutes = st.time_minutes + 601 FROM st WHERE st.time_minutes < 100
-	UNION ALL	SELECT time_minutes = st.time_minutes + 701 FROM st WHERE st.time_minutes < 100
-	UNION ALL	SELECT time_minutes = st.time_minutes + 801 FROM st WHERE st.time_minutes < 100
-	UNION ALL	SELECT time_minutes = st.time_minutes + 901 FROM st WHERE st.time_minutes < 100
-	UNION ALL	SELECT time_minutes = st.time_minutes + 1001 FROM st WHERE st.time_minutes < 100
-	UNION ALL	SELECT time_minutes = st.time_minutes + 1101 FROM st WHERE st.time_minutes < 100
-	UNION ALL	SELECT time_minutes = st.time_minutes + 1201 FROM st WHERE st.time_minutes < 100
-	UNION ALL	SELECT time_minutes = st.time_minutes + 1301 FROM st WHERE st.time_minutes < 100
-	UNION ALL	SELECT time_minutes = st.time_minutes + 1401 FROM st WHERE st.time_minutes < 39
+	SELECT time_minutes = 0
+	UNION ALL
+	SELECT time_minutes = st.time_minutes + 1 FROM st WHERE st.time_minutes < 1439
 )
-INSERT	INTO [dbo].[schedule_time_enum]
-SELECT	time_minutes
+INSERT INTO [dbo].[schedule_time_enum]
+SELECT  time_minutes
 		, time_value = DATEADD(MI, time_minutes, @time)
-FROM	ST 
+FROM    st 
 ORDER BY 1;
 GO
 
@@ -40,19 +27,23 @@ GO
 GO
 CREATE TABLE [dbo].[schedule_type]
 (
-    [schedule_type_id]          INT NOT NULL,
-    [schedule_type_name]        VARCHAR (100) NOT NULL,
+    [schedule_type_id]		INT NOT NULL,
+    [schedule_type_name]	VARCHAR (100) NOT NULL,
+	[days_json]				VARCHAR (450)	NULL,
+	[weeks_json]			VARCHAR (75)	NULL,
+	[weekdays_json]			VARCHAR (125)	NULL,
+	[months_json]			VARCHAR (200)	NULL,
     CONSTRAINT [pk_schedule_type] PRIMARY KEY CLUSTERED ([schedule_type_id] ASC),
     CONSTRAINT [uq_schedule_type_name] UNIQUE NONCLUSTERED ([schedule_type_name] ASC)
 );
 GO
 
-INSERT INTO [dbo].[schedule_type] (schedule_type_id, schedule_type_name)
-VALUES (10, 'One Time')
-	, (20, 'Daily')
-	, (30, 'Weekly')
-	, (40, 'Monthly-Days')
-	, (41, 'Monthly-Weeks')
+INSERT INTO [dbo].[schedule_type] (schedule_type_id, schedule_type_name, days_json, weeks_json, weekdays_json, months_json)
+VALUES (10, 'One Time', NULL, NULL, NULL, NULL)
+	, (20, 'Daily', '{ "day01":1, "day02":2, "day03":3, "day04":4, "day05":5, "day06":6, "day07":7, "day08":8, "day09":9, "day10":10, "day11":11, "day12":12, "day13":13, "day14":14, "day15":15, "day16":16, "day17":17, "day18":18, "day19":19, "day20":20, "day21":21, "day22":22, "day23":23, "day24":24, "day25":25, "day26":26, "day27":27, "day28":28, "day29":29, "day30":30, "day31":31, "last":32}', NULL, NULL, NULL)
+	, (30, 'Weekly', NULL, NULL, '{ "sunday":1, "monday":2, "tuesday":3, "wednesday":4, "thursday":5, "friday":6, "saturday":7 }', NULL)
+	, (40, 'Monthly-Days', '{ "day01":1, "day02":2, "day03":3, "day04":4, "day05":5, "day06":6, "day07":7, "day08":8, "day09":9, "day10":10, "day11":11, "day12":12, "day13":13, "day14":14, "day15":15, "day16":16, "day17":17, "day18":18, "day19":19, "day20":20, "day21":21, "day22":22, "day23":23, "day24":24, "day25":25, "day26":26, "day27":27, "day28":28, "day29":29, "day30":30, "day31":31, "last":32}', NULL, NULL, '{ "january":1, "february":2, "march":3, "april":4, "may":5, "june":6, "july":7, "august":8, "september":9, "october":10, "november":11, "december":12 }')
+--	, (41, 'Monthly-Weeks', NULL, '{ "first":1, "second":2, "third":3, "fourth":4, "last":5 }', '{ "sunday":1, "monday":2, "tuesday":3, "wednesday":4, "thursday":5, "friday":6, "saturday":7 }', '{ "january":1, "february":2, "march":3, "april":4, "may":5, "june":6, "july":7, "august":8, "september":9, "october":10, "november":11, "december":12 }')
 GO
 
 
